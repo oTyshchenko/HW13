@@ -1,0 +1,45 @@
+{
+    "name": "hw13",
+    "version": "1.0.0",
+    "description": "hw13",
+    "main": "index.js",
+    "scripts": {
+        "build": "webpack --mode production",
+        "start": "webpack serve"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/oTyshchenko/HW13.git"
+    },
+    "browserslist": "> 0.25%, not dead",
+    "keywords": [
+        "js"
+    ],
+    "author": "oTyshchenko",
+    "bugs": {
+        "url": "https://github.com/oTyshchenko/HW13/issues"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.14.2",
+        "@babel/preset-env": "^7.14.2",
+        "babel-loader": "^8.2.2",
+        "clean-webpack-plugin": "^4.0.0-alpha.0",
+        "css-loader": "^5.2.4",
+        "file-loader": "^6.2.0",
+        "html-webpack-plugin": "^5.3.1",
+        "less": "^4.1.1",
+        "less-loader": "^8.1.1",
+        "mini-css-extract-plugin": "^1.6.0",
+        "node-sass": "^5.0.0",
+        "optimize-css-assets-webpack-plugin": "^5.0.4",
+        "sass-loader": "^11.0.1",
+        "style-loader": "^2.0.0",
+        "uglifyjs-webpack-plugin": "^2.2.0",
+        "webpack": "^5.36.2",
+        "webpack-cli": "^4.7.0",
+        "webpack-dev-server": "^3.11.2"
+    },
+    "dependencies": {
+        "@babel/polyfill": "^7.12.1"
+    }
+}

@@ -1,8 +1,4 @@
-
-
-  const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "Darkorange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-
-  const datas = [
+  const COUNTRY_INF = [
     {
         ID: 'AD',
         country: 'Andorra',
@@ -1235,77 +1231,29 @@
     }
 ];
 
-function sortByPopulation(arr) {
-    arr.sort((a, b) => a.population < b.population ? 1 : -1);
-};
-sortByPopulation(datas);
-//console.log(datas);
+COUNTRY_INF.sort((a, b) => a.population < b.population ? 1 : -1);
 
-function earsPopulationCounter(arr) {
-    let x = 0;
-    arr.map(function(arr) {
-        x = arr.population + x;
-    })
-    return x;
-};
+const PopulationCounter = arr => eval(arr.map(el => el = el.population).join('+'));
 
-let earsPopulation = earsPopulationCounter(datas);
-console.log(earsPopulation/100);
+const ONE_PERSENT_EARTH_POPULATION = PopulationCounter(COUNTRY_INF)/100;
 
-function ovwrrr(el) {
-    return el.population > earsPopulation/100;
-};
+const COUNTRY_ABOVE_ONE_PERSENT = COUNTRY_INF.filter(el => el.population > ONE_PERSENT_EARTH_POPULATION);
 
-let over = datas.filter(ovwrrr);
-//console.log(over)
+const COUNTRY_BELOVE_ONE_PERSENT = COUNTRY_INF.filter(el => el.population < ONE_PERSENT_EARTH_POPULATION);
 
-function ovwrrdr(el) {
-    return el.population < earsPopulation/100;
-};
-
-let notEnough = datas.filter(ovwrrdr);
-//console.log(notEnough)
-
-let notEnoughPopulation = earsPopulationCounter(notEnough);
-console.log(notEnoughPopulation)
-
-let others = {
+const OTHERS_CONTRY = [{
     ID: 'OTH',
     country: 'Others',
-    population: notEnoughPopulation
-};
+    population: PopulationCounter(COUNTRY_BELOVE_ONE_PERSENT)
+}];
 
-over.push(others);
-
-console.log(over);
-
-function countrynamer(arr) {
-    let newArr = [];
-    arr.map(function (el) {
-        newArr.push(el.country);
-    })
-    return newArr;
-}
-
-let resultCountryName = countrynamer(over);
-console.log(resultCountryName);
-
-function countrypopulation(arr) {
-    let newArr = [];
-    arr.map(function (el) {
-        newArr.push(el.population);
-    })
-    return newArr;
-}
-
-let resultCountryP = countrypopulation(over);
-console.log(resultCountryP);
+const RESULT_DATA = COUNTRY_ABOVE_ONE_PERSENT.concat(OTHERS_CONTRY);
 
 const data = {
-    labels: resultCountryName,
+    labels: RESULT_DATA.map(el => el = el.country),
     datasets: [{
         label: 'My First Dataset',
-        data: resultCountryP,
+        data: RESULT_DATA.map(el => el = el.population),
         backgroundColor: [
             "AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson"
         ],
@@ -1318,7 +1266,7 @@ const config = {
     data: data,
 };
 
-var myChart = new Chart(
+let myChart = new Chart(
     document.getElementById('myChart'),
     config
   );
