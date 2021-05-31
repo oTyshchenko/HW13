@@ -2,18 +2,34 @@ import './style/style.scss';
 import COUNTRY_INF from './script/data';
 import CSS_COLOR_NAMES from './script/colors';
 
-const LEGEND = document.getElementById("legend");
+const WRAPPER = document.getElementById('wrapper');
 const CANVAS = document.getElementById("canvas");
+const onePercent = 1;
 
-const PopulationCounter = (arr) => {
-    const initialValue = 0;
-    return arr.reduce((accumulator, currentValue) => accumulator + currentValue.population, initialValue);
+const earthPopulation = COUNTRY_INF.reduce((acc, currentValue) => acc + currentValue.population, 0);
+
+let currentData = COUNTRY_INF.map((el) => {
+    return {
+        ...el,
+        percentPopulation: el.population / earthPopulation * 100
+    }
+});
+
+const BigCounties = currentData.filter(el => el.percentPopulation > onePercent);
+const OtherCountries = currentData.filter(el => el.percentPopulation < onePercent);
+
+BigCounties.sort((a, b) => b.population - a.population);
+
+const otherCountry  = {
+    country: 'Others',
+    percentPopulation: OtherCountries.reduce((acc, currentValue) => acc + currentValue.percentPopulation, 0)
 };
 
-const arrPusher = (arr, el) => {
-    arr.push(el);
-    return arr;
-};
+const resultData = BigCounties.map((el) => {
+    return {...el,}
+});
+
+resultData.push(otherCountry);
 
 const drawPieSlice = (ctx, centerX, centerY, radius, startAngle, endAngle, color) => {
     ctx.fillStyle = color;
@@ -24,15 +40,16 @@ const drawPieSlice = (ctx, centerX, centerY, radius, startAngle, endAngle, color
     ctx.fill();
 };
 
-const makePieDiagram = (arr, drawBox, colorArr, legendBox) => {
+const makePieDiagram = (arr, drawBox, colorArr) => {
+    const legend = document.createElement('ul');
+    legend.classList.add('legend');
     const CONTEXT = drawBox.getContext("2d");
-    const ARR_POPULATION = (PopulationCounter(arr));
 
     let counter = 0;
     let startAngle = (Math.PI / 180) * 270;
     
-    arr.map((el) => {
-        const sliceAngle = 2 * Math.PI * el.population / ARR_POPULATION;
+    arr.forEach((el) => {
+        const sliceAngle = 2 * Math.PI * el.percentPopulation / 100;
 
         drawPieSlice(
             CONTEXT,
@@ -47,34 +64,21 @@ const makePieDiagram = (arr, drawBox, colorArr, legendBox) => {
 
         const li = document.createElement('li');
         const colorBox = document.createElement('div');
-        const countryName = document.createElement('span');
-        const populationPercent = document.createElement('span');
+        const countryDescription = document.createElement('span');
 
         li.classList.add('legend-item');
         colorBox.classList.add('color-box');
         colorBox.style.background = colorArr[counter];
 
-        countryName.textContent = el.country;
-        populationPercent.textContent = '(' + (100 * el.population / ARR_POPULATION).toFixed(2) + '%)';
+        countryDescription.textContent = `${el.country} (${(el.percentPopulation).toFixed(2)}%)`;
 
         li.appendChild(colorBox);
-        li.appendChild(countryName);
-        li.appendChild(populationPercent);
-        legendBox.appendChild(li);
+        li.appendChild(countryDescription);
+        legend.appendChild(li);
 
         counter++;
     });
+    WRAPPER.appendChild(legend);
 };
 
-COUNTRY_INF.sort((a, b) => b.population - a.population);
-
-const ONE_PERCENT_EARTH_POPULATION = PopulationCounter(COUNTRY_INF) / 100;
-
-const getBigCounties = COUNTRY_INF.filter(el => el.population > ONE_PERCENT_EARTH_POPULATION);
-const getOtherCountries = COUNTRY_INF.filter(el => el.population < ONE_PERCENT_EARTH_POPULATION);
-
-const OTHERS_CONTRY = {ID: 'OTH', country: 'Others', population: PopulationCounter(getOtherCountries)};
-
-const RESULT_DATA = arrPusher(getBigCounties, OTHERS_CONTRY);
-
-makePieDiagram (RESULT_DATA, CANVAS, CSS_COLOR_NAMES, LEGEND);
+makePieDiagram (resultData, CANVAS, CSS_COLOR_NAMES);
