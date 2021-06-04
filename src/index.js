@@ -8,27 +8,19 @@ const onePercent = 1;
 
 const earthPopulation = COUNTRY_INF.reduce((acc, currentValue) => acc + currentValue.population, 0);
 
-let currentData = COUNTRY_INF.map((el) => {
-    return {
-        ...el,
-        percentPopulation: el.population / earthPopulation * 100
-    }
-});
+const currentData = COUNTRY_INF.map(el => 
+    ({country: el.country, percentPopulation: el.population / earthPopulation * 100}));
 
-const BigCounties = currentData.filter(el => el.percentPopulation > onePercent);
-const OtherCountries = currentData.filter(el => el.percentPopulation < onePercent);
-
-BigCounties.sort((a, b) => b.population - a.population);
+const bigCounties = currentData.filter(el => el.percentPopulation > onePercent)
+    .sort((a, b) => b.population - a.population);
 
 const otherCountry  = {
     country: 'Others',
-    percentPopulation: OtherCountries.reduce((acc, currentValue) => acc + currentValue.percentPopulation, 0)
+    percentPopulation: currentData.filter(el => el.percentPopulation < onePercent)
+        .reduce((acc, currentValue) => acc + currentValue.percentPopulation, 0)
 };
 
-const resultData = BigCounties.map((el) => {
-    return {...el,}
-});
-
+const resultData = bigCounties.map(el => ({country: el.country, percentPopulation: el.percentPopulation}));
 resultData.push(otherCountry);
 
 const drawPieSlice = (ctx, centerX, centerY, radius, startAngle, endAngle, color) => {
@@ -42,17 +34,17 @@ const drawPieSlice = (ctx, centerX, centerY, radius, startAngle, endAngle, color
 
 const makePieDiagram = (arr, drawBox, colorArr) => {
     const legend = document.createElement('ul');
-    legend.classList.add('legend');
-    const CONTEXT = drawBox.getContext("2d");
-
+    const context = drawBox.getContext("2d");
     let counter = 0;
     let startAngle = (Math.PI / 180) * 270;
+
+    legend.classList.add('legend');
     
     arr.forEach((el) => {
         const sliceAngle = 2 * Math.PI * el.percentPopulation / 100;
 
         drawPieSlice(
-            CONTEXT,
+            context,
             drawBox.width/2,
             drawBox.height/2,
             Math.min(drawBox.width/2, drawBox.height/2),
