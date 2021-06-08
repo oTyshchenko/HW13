@@ -12,16 +12,20 @@ const currentData = COUNTRY_INF.map(el =>
     ({country: el.country, percentPopulation: el.population / earthPopulation * 100}));
 
 const bigCounties = currentData.filter(el => el.percentPopulation > onePercent)
-    .sort((a, b) => b.population - a.population);
+    .sort((a, b) => b.percentPopulation - a.percentPopulation);
 
 const otherCountry  = {
     country: 'Others',
-    percentPopulation: currentData.filter(el => el.percentPopulation < onePercent)
-        .reduce((acc, currentValue) => acc + currentValue.percentPopulation, 0)
+    percentPopulation: currentData.reduce((acc, el) => {
+        if (el.percentPopulation < onePercent) {
+            return acc + el.percentPopulation;
+        } else {
+            return acc + 0;
+        }
+    }, 0)
 };
 
-const resultData = bigCounties.map(el => ({country: el.country, percentPopulation: el.percentPopulation}));
-resultData.push(otherCountry);
+const resultData = [...bigCounties, otherCountry];
 
 const drawPieSlice = (ctx, centerX, centerY, radius, startAngle, endAngle, color) => {
     ctx.fillStyle = color;
